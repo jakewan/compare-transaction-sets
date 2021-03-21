@@ -1,0 +1,5 @@
+{
+  "python.languageServer": "Pylance",
+  "python.pythonPath": ".env/bin/python",
+  "python.formatting.provider": "black"
+}

@@ -2,16 +2,22 @@ name: On Commit
 on: push
 jobs:
   lint-and-test:
+    name: Lint and Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-      - name: Install dependencies
-        run: pip install flake8 pytest
-      - name: Lint
-        run: flake8 . --count --show-source --statistics
+      - name: Setup Python virtual environment
+        run: make setup-venv
+      - name: Check Python imports
+        run: make check-imports
+      - name: Check Python code formatting
+        run: make check-formatting
+      - name: Run linter
+        run: make lint
       - name: Run unit tests
-        run: pytest
+        run: make test
