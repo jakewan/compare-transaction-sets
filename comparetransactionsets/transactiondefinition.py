@@ -35,8 +35,8 @@ class DefinitionPart:
             self.__filter.append(
                 {
                     "type": "columnName",
-                    "columnName": view_profile["filter"]["names"][i],
-                    "value": part_config["filter"]["values"][i],
+                    "columnName": view_profile["filter"][i],
+                    "value": part_config["filter"][i],
                 }
             )
         self.__date_column_name = view_profile["dateColumn"]

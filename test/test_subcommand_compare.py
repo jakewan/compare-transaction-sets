@@ -39,12 +39,12 @@ def test_finds_diff_in_values(capsys):
             "spreadsheet1View": {
                 "spreadsheet": "spreadsheet1",
                 "dateColumn": "Date",
-                "filter": {"names": ["Name", "Description"]},
+                "filter": ["Name", "Description"],
             },
             "spreadsheet2View": {
                 "spreadsheet": "spreadsheet2",
                 "dateColumn": "Date",
-                "filter": {"names": ["Name", "Comment"]},
+                "filter": ["Name", "Comment"],
             },
         },
         "views": {
@@ -63,15 +63,11 @@ def test_finds_diff_in_values(capsys):
             "Foo to Baz": {
                 "from": {
                     "view": "Foo Withdrawals",
-                    "filter": {
-                        "values": ["Baz", "Some description"],
-                    },
+                    "filter": ["Baz", "Some description"],
                 },
                 "to": {
                     "view": "Baz Deposits",
-                    "filter": {
-                        "values": ["Foo", "Some comment"],
-                    },
+                    "filter": ["Foo", "Some comment"],
                 },
             }
         },
@@ -119,7 +115,7 @@ def test_find_mismatched_transactions(capsys):
             "spreadsheet1View": {
                 "spreadsheet": "spreadsheet1",
                 "dateColumn": "Date",
-                "filter": {"names": ["Name", "Description"]},
+                "filter": ["Name", "Description"],
             },
         },
         "views": {
@@ -138,15 +134,11 @@ def test_find_mismatched_transactions(capsys):
             "Foo to Bar": {
                 "from": {
                     "view": "Foo Withdrawals",
-                    "filter": {
-                        "values": ["Bar", "Some description"],
-                    },
+                    "filter": ["Bar", "Some description"],
                 },
                 "to": {
                     "view": "Bar Deposits",
-                    "filter": {
-                        "values": ["Foo", "Some description"],
-                    },
+                    "filter": ["Foo", "Some description"],
                 },
             }
         },
@@ -197,12 +189,12 @@ def test_similar_filter_for_opposing_transaction_defs_is_okay(capsys):
             "spreadsheet1View": {
                 "spreadsheet": "spreadsheet1",
                 "dateColumn": "Date",
-                "filter": {"names": ["Column1", "Column2"]},
+                "filter": ["Column1", "Column2"],
             },
             "spreadsheet2View": {
                 "spreadsheet": "spreadsheet2",
                 "dateColumn": "Date",
-                "filter": {"names": ["Column1", "Column2"]},
+                "filter": ["Column1", "Column2"],
             },
         },
         "views": {
@@ -221,15 +213,11 @@ def test_similar_filter_for_opposing_transaction_defs_is_okay(capsys):
             "Foo to Baz": {
                 "from": {
                     "view": "Foo Withdrawals",
-                    "filter": {
-                        "values": ["Baz", "Same on both sides"],
-                    },
+                    "filter": ["Baz", "Same on both sides"],
                 },
                 "to": {
                     "view": "Baz Deposits",
-                    "filter": {
-                        "values": ["Foo", "Same on both sides"],
-                    },
+                    "filter": ["Foo", "Same on both sides"],
                 },
             }
         },
