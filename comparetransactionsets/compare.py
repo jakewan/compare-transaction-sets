@@ -14,7 +14,7 @@ from comparetransactionsets.mismatchedvalue import MismatchedValue
 from comparetransactionsets.transactiondefinition import TransactionDefinition
 from comparetransactionsets.transactiondirection import TransactionDirection
 
-locale.setlocale(locale.LC_ALL, "")
+locale.setlocale(locale.LC_ALL, ("en_US", "UTF-8"))
 
 
 def _get_mismatched_values(defn, from_values, to_values):

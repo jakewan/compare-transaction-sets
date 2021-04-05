@@ -1,4 +1,3 @@
-import locale
 from decimal import Decimal
 
 
@@ -22,7 +21,5 @@ class MismatchedValue:
 
     @staticmethod
     def _string_to_decimal(str_val):
-        db = locale.localeconv()
-        return str_val.replace(db["currency_symbol"], "").replace(
-            db["mon_thousands_sep"], ""
-        )
+        result = str_val.replace("$", "").replace(",", "")
+        return result
