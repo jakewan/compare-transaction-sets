@@ -1,8 +1,8 @@
 class TransactionDefinition:
-    def __init__(self, defn_config) -> None:
-        self.__series_name = defn_config["name"]
-        self.__from_def = DefinitionPart(defn_config["from"])
-        self.__to_def = DefinitionPart(defn_config["to"])
+    def __init__(self, series_name, series_config, outer_config):
+        self.__series_name = series_name
+        self.__from_def = DefinitionPart(series_config["from"], outer_config)
+        self.__to_def = DefinitionPart(series_config["to"], outer_config)
 
     def __repr__(self):
         return f"TransactionDefinition(from={self.__from_def!r},to={self.__to_def!r})"
@@ -21,24 +21,26 @@ class TransactionDefinition:
 
 
 class DefinitionPart:
-    def __init__(self, part_config):
-        self.__spreadsheet_id = part_config["spreadsheetId"]
-        self.__sheet_name = part_config["sheetName"]
-        self.__range = part_config.get("range", None)
+    def __init__(self, part_config, outer_config):
+        view = outer_config["views"][part_config["view"]]
+        view_profile = outer_config["viewProfiles"][view["profile"]]
+        spreadsheet = outer_config["spreadsheets"][view_profile["spreadsheet"]]
+        self.__spreadsheet_id = spreadsheet["spreadsheetId"]
+        self.__sheet_name = view["sheet"]
+        self.__range = view.get("range", None)
         if self.__range is None:
             self.__range = "A:I"
         self.__filter = []
-        f = part_config["filter"]
         for i in range(2):
             self.__filter.append(
                 {
                     "type": "columnName",
-                    "columnName": f["names"][i],
-                    "value": f["values"][i],
+                    "columnName": view_profile["filter"]["names"][i],
+                    "value": part_config["filter"]["values"][i],
                 }
             )
-        self.__date_column_name = part_config["dateColumn"]
-        self.__value_column_name = part_config["valueColumn"]
+        self.__date_column_name = view_profile["dateColumn"]
+        self.__value_column_name = view["valueColumn"]
 
     def __repr__(self):
         return (

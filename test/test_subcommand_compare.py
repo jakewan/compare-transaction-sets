@@ -31,31 +31,50 @@ def _default(temp_config_obj, return_data):
 
 def test_finds_diff_in_values(capsys):
     temp_config_obj = {
-        "transactionDefs": [
-            {
-                "name": "Foo to Baz",
+        "spreadsheets": {
+            "spreadsheet1": {"spreadsheetId": "some-sheet-1"},
+            "spreadsheet2": {"spreadsheetId": "some-sheet-2"},
+        },
+        "viewProfiles": {
+            "spreadsheet1View": {
+                "spreadsheet": "spreadsheet1",
+                "dateColumn": "Date",
+                "filter": {"names": ["Name", "Description"]},
+            },
+            "spreadsheet2View": {
+                "spreadsheet": "spreadsheet2",
+                "dateColumn": "Date",
+                "filter": {"names": ["Name", "Comment"]},
+            },
+        },
+        "views": {
+            "Foo Withdrawals": {
+                "profile": "spreadsheet1View",
+                "sheet": "Foo Data",
+                "valueColumn": "Withdrawal",
+            },
+            "Baz Deposits": {
+                "profile": "spreadsheet2View",
+                "sheet": "Baz Data",
+                "valueColumn": "Deposit",
+            },
+        },
+        "series": {
+            "Foo to Baz": {
                 "from": {
-                    "spreadsheetId": "some-sheet-1",
-                    "sheetName": "Foo Data",
+                    "view": "Foo Withdrawals",
                     "filter": {
-                        "names": ["Name", "Description"],
                         "values": ["Baz", "Some description"],
                     },
-                    "dateColumn": "Date",
-                    "valueColumn": "Withdrawal",
                 },
                 "to": {
-                    "spreadsheetId": "some-sheet-2",
-                    "sheetName": "Baz Data",
+                    "view": "Baz Deposits",
                     "filter": {
-                        "names": ["Name", "Comment"],
                         "values": ["Foo", "Some comment"],
                     },
-                    "dateColumn": "Date",
-                    "valueColumn": "Deposit",
                 },
             }
-        ],
+        },
     }
     api_values = (
         {
@@ -92,31 +111,45 @@ For transaction series "Foo to Baz":
 
 def test_find_mismatched_transactions(capsys):
     temp_config_obj = {
-        "transactionDefs": [
-            {
-                "name": "Foo to Bar",
+        "spreadsheets": {
+            "spreadsheet1": {"spreadsheetId": "some-sheet-1"},
+            "spreadsheet2": {"spreadsheetId": "some-sheet-2"},
+        },
+        "viewProfiles": {
+            "spreadsheet1View": {
+                "spreadsheet": "spreadsheet1",
+                "dateColumn": "Date",
+                "filter": {"names": ["Name", "Description"]},
+            },
+        },
+        "views": {
+            "Foo Withdrawals": {
+                "profile": "spreadsheet1View",
+                "sheet": "Foo Data",
+                "valueColumn": "Withdrawal",
+            },
+            "Bar Deposits": {
+                "profile": "spreadsheet1View",
+                "sheet": "Bar Data",
+                "valueColumn": "Deposit",
+            },
+        },
+        "series": {
+            "Foo to Bar": {
                 "from": {
-                    "spreadsheetId": "some-sheet-1",
-                    "sheetName": "Foo Data",
+                    "view": "Foo Withdrawals",
                     "filter": {
-                        "names": ["Name", "Description"],
                         "values": ["Bar", "Some description"],
                     },
-                    "dateColumn": "Date",
-                    "valueColumn": "Withdrawal",
                 },
                 "to": {
-                    "spreadsheetId": "some-sheet-1",
-                    "sheetName": "Bar Data",
+                    "view": "Bar Deposits",
                     "filter": {
-                        "names": ["Name", "Description"],
                         "values": ["Foo", "Some description"],
                     },
-                    "dateColumn": "Date",
-                    "valueColumn": "Deposit",
                 },
             }
-        ],
+        },
     }
     api_values = (
         {
@@ -156,31 +189,50 @@ For transaction series "Foo to Bar":
 
 def test_similar_filter_for_opposing_transaction_defs_is_okay(capsys):
     temp_config_obj = {
-        "transactionDefs": [
-            {
-                "name": "Foo to Baz",
+        "spreadsheets": {
+            "spreadsheet1": {"spreadsheetId": "some-sheet-1"},
+            "spreadsheet2": {"spreadsheetId": "some-sheet-2"},
+        },
+        "viewProfiles": {
+            "spreadsheet1View": {
+                "spreadsheet": "spreadsheet1",
+                "dateColumn": "Date",
+                "filter": {"names": ["Column1", "Column2"]},
+            },
+            "spreadsheet2View": {
+                "spreadsheet": "spreadsheet2",
+                "dateColumn": "Date",
+                "filter": {"names": ["Column1", "Column2"]},
+            },
+        },
+        "views": {
+            "Foo Withdrawals": {
+                "profile": "spreadsheet1View",
+                "sheet": "Foo Data",
+                "valueColumn": "Withdrawal",
+            },
+            "Baz Deposits": {
+                "profile": "spreadsheet2View",
+                "sheet": "Baz Data",
+                "valueColumn": "Deposit",
+            },
+        },
+        "series": {
+            "Foo to Baz": {
                 "from": {
-                    "spreadsheetId": "some-sheet-1",
-                    "sheetName": "Foo Data",
+                    "view": "Foo Withdrawals",
                     "filter": {
-                        "names": ["Column1", "Column2"],
                         "values": ["Baz", "Same on both sides"],
                     },
-                    "dateColumn": "Date",
-                    "valueColumn": "Withdrawal",
                 },
                 "to": {
-                    "spreadsheetId": "some-sheet-2",
-                    "sheetName": "Baz Data",
+                    "view": "Baz Deposits",
                     "filter": {
-                        "names": ["Column1", "Column2"],
                         "values": ["Foo", "Same on both sides"],
                     },
-                    "dateColumn": "Date",
-                    "valueColumn": "Deposit",
                 },
             }
-        ],
+        },
     }
     api_values = (
         {

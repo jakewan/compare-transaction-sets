@@ -6,6 +6,7 @@ from os.path import dirname, exists, join
 from appdirs import user_config_dir
 
 from comparetransactionsets import __APP_NAME__, __AUTHOR__
+from comparetransactionsets.configuration import Configuration
 from comparetransactionsets.terminalcolors import OK, RESET, WARNING
 
 __CONFIG_FILE_PATH__ = join(
@@ -37,7 +38,7 @@ def read():
 def _read_config():
     try:
         with open(__CONFIG_FILE_PATH__) as f:
-            return json.load(f)
+            return Configuration(json.load(f))
     except FileNotFoundError:
         sys.exit(
             (

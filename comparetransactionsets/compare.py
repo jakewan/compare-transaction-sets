@@ -11,7 +11,6 @@ from comparetransactionsets.diffset import DiffSet
 from comparetransactionsets.get_creds import exec as _get_creds
 from comparetransactionsets.mismatchedtransaction import MismatchedTransaction
 from comparetransactionsets.mismatchedvalue import MismatchedValue
-from comparetransactionsets.transactiondefinition import TransactionDefinition
 from comparetransactionsets.transactiondirection import TransactionDirection
 
 locale.setlocale(locale.LC_ALL, ("en_US", "UTF-8"))
@@ -170,10 +169,7 @@ def exec(args):
     creds = _get_creds()
     service = build("sheets", "v4", credentials=creds)
     sheets = service.spreadsheets()
-    diffs = [
-        _compare_set(defn, sheets)
-        for defn in (TransactionDefinition(i) for i in config["transactionDefs"])
-    ]
+    diffs = [_compare_set(s, sheets) for s in config.series_defs]
     diffs = list(filter(lambda x: x.contains_mismatches, diffs))
     if len(diffs) < 1:
         print(f"{OK}No problems found.{RESET}")
