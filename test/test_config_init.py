@@ -7,8 +7,8 @@ __EXPECTED_DEFAULT_CONFIG__ = {"transaction-defs": []}
 
 def test_writes_expected_default_config():
     standard_cli_test(
-        temp_config_file_args={"init_file": False},
         cli_args_str="config init",
+        init_file=False,
         assert_config_fun=make_assert_config_fun(__EXPECTED_DEFAULT_CONFIG__),
     )
 
@@ -22,8 +22,8 @@ def test_displays_config_file_location(capsys):
         )
 
     standard_cli_test(
-        temp_config_file_args={"init_file": False},
         cli_args_str="config init",
+        init_file=False,
         assert_fun=_assert,
     )
 

@@ -15,7 +15,13 @@ setup(
         "console_scripts": ["compare-transaction-sets=comparetransactionsets.cli:main"],
     },
     python_requires=">=3.9",
-    install_requires=["appdirs", "requests"],
+    install_requires=[
+        "appdirs",
+        "requests",
+        "google-api-python-client",
+        "google-auth-httplib2",
+        "google-auth-oauthlib",
+    ],
     extras_require={
         "test": [
             "pytest",

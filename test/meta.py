@@ -12,8 +12,6 @@ import pytest
 import comparetransactionsets.config
 from comparetransactionsets import __APP_NAME__, cli
 
-__DEFAULT_CONFIG__ = {"foo": "bar"}
-
 
 class TempConfigFile(TemporaryDirectory):
     def __init__(self, init_file=True, init_dir=False, config_obj=None):
@@ -27,9 +25,11 @@ class TempConfigFile(TemporaryDirectory):
 
 
 def standard_cli_test(
+    temp_config_obj=None,
+    init_file=True,
+    init_dir=False,
     cli_args=None,
     cli_args_str=None,
-    temp_config_file_args={"config_obj": __DEFAULT_CONFIG__},
     assert_fun=None,
     assert_config_fun=None,
     expected_exception_type=None,
@@ -40,6 +40,11 @@ def standard_cli_test(
         cli_args is not None or cli_args_str is not None
     ), "The caller must supply the cli_args or cli_args_str argument."
     cli_args = cli_args if cli_args_str is None else cli_args_str.split()
+    temp_config_file_args = {
+        "config_obj": temp_config_obj,
+        "init_file": init_file,
+        "init_dir": init_dir,
+    }
     with TempConfigFile(**temp_config_file_args) as tempdir_name:
         config_file_path = join(tempdir_name, "subdir/config.json")
         with patch.object(
