@@ -1,7 +1,9 @@
 import locale
+import sys
 from datetime import date
 from functools import partial
 from itertools import filterfalse
+from pprint import pformat
 
 from googleapiclient.discovery import build
 
@@ -104,7 +106,13 @@ def _compare_set(defn, sheets_service):
         for i in values:
             if i[defn.value_column] == "":
                 continue
-            tnx_date = parse_date(i[defn.date_column])
+            try:
+                tnx_date = parse_date(i[defn.date_column])
+            except IndexError:
+                sys.exit(
+                    f"{WARNING}A problem was found with the following"
+                    f" row:\n{pformat(i, sort_dicts=False)}{RESET}"
+                )
             if defn.start_date is not None:
                 if tnx_date < defn.start_date:
                     continue
