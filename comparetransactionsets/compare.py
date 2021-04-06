@@ -6,7 +6,7 @@ from itertools import filterfalse
 from googleapiclient.discovery import build
 
 import comparetransactionsets.config
-from comparetransactionsets import OK, RESET, WARNING
+from comparetransactionsets import OK, RESET, WARNING, parse_date
 from comparetransactionsets.diffset import DiffSet
 from comparetransactionsets.get_creds import exec as _get_creds
 from comparetransactionsets.mismatchedtransaction import MismatchedTransaction
@@ -104,6 +104,10 @@ def _compare_set(defn, sheets_service):
         for i in values:
             if i[defn.value_column] == "":
                 continue
+            tnx_date = parse_date(i[defn.date_column])
+            if defn.start_date is not None:
+                if tnx_date < defn.start_date:
+                    continue
             ok = True
             for filter_test in defn.filter:
                 if not _filter_row(i, filter_test):

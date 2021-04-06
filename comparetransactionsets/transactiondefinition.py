@@ -1,8 +1,17 @@
+from comparetransactionsets import parse_date
+
+
 class TransactionDefinition:
     def __init__(self, series_name, series_config, outer_config):
         self.__series_name = series_name
-        self.__from_def = DefinitionPart(series_config["from"], outer_config)
-        self.__to_def = DefinitionPart(series_config["to"], outer_config)
+        try:
+            start_date = parse_date(series_config["startDate"])
+        except KeyError:
+            start_date = None
+        self.__from_def = DefinitionPart(
+            series_config["from"], outer_config, start_date
+        )
+        self.__to_def = DefinitionPart(series_config["to"], outer_config, start_date)
 
     def __repr__(self):
         return f"TransactionDefinition(from={self.__from_def!r},to={self.__to_def!r})"
@@ -21,7 +30,7 @@ class TransactionDefinition:
 
 
 class DefinitionPart:
-    def __init__(self, part_config, outer_config):
+    def __init__(self, part_config, outer_config, start_date):
         view = outer_config["views"][part_config["view"]]
         view_profile = outer_config["viewProfiles"][view["profile"]]
         spreadsheet = outer_config["spreadsheets"][view_profile["spreadsheet"]]
@@ -30,6 +39,7 @@ class DefinitionPart:
         self.__range = view.get("range", None)
         if self.__range is None:
             self.__range = "A:I"
+        self.__start_date = start_date
         self.__filter = []
         for i in range(2):
             try:
@@ -55,7 +65,8 @@ class DefinitionPart:
             f"date_column={self.__date_column_name},"
             f"value_column={self.__value_column_name},"
             f"range={self.__range},"
-            f"filter={self.__filter!r})"
+            f"filter={self.__filter!r}),"
+            f"start_date={self.__start_date!r}"
         )
 
     @property
@@ -81,3 +92,7 @@ class DefinitionPart:
     @property
     def value_column(self):
         return self.__value_column_name
+
+    @property
+    def start_date(self):
+        return self.__start_date

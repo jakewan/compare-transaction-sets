@@ -6,6 +6,15 @@ from comparetransactionsets.terminalcolors import OK, RESET, WARNING
 from .meta import standard_cli_test
 
 
+def _verify_no_problems_output(capsys):
+    captured = capsys.readouterr()
+    assert (
+        captured.out
+        == f"""{OK}No problems found.{RESET}
+"""
+    )
+
+
 def _default(temp_config_obj, return_data):
     def _execute():
         result = return_data[_execute.idx]
@@ -243,12 +252,7 @@ def test_similar_filter_for_opposing_transaction_defs_is_okay(capsys):
     _default(temp_config_obj, api_values)
 
     # Verify
-    captured = capsys.readouterr()
-    assert (
-        captured.out
-        == f"""{OK}No problems found.{RESET}
-"""
-    )
+    _verify_no_problems_output(capsys)
 
 
 def test_second_descriptive_column_value_config_is_optional():
@@ -305,3 +309,62 @@ def test_second_descriptive_column_value_config_is_optional():
         },
     )
     _default(temp_config_obj, api_values)
+
+
+def test_limit_transactions_by_start_date(capsys):
+    temp_config_obj = {
+        "spreadsheets": {
+            "foo": {"spreadsheetId": "foo"},
+        },
+        "viewProfiles": {
+            "foo": {
+                "spreadsheet": "foo",
+                "dateColumn": "Date",
+                "filter": ["Column1", "Column2"],
+            },
+        },
+        "views": {
+            "Foo": {
+                "profile": "foo",
+                "sheet": "Foo",
+                "valueColumn": "Withdrawal",
+            },
+            "Bar": {
+                "profile": "foo",
+                "sheet": "Bar",
+                "valueColumn": "Deposit",
+            },
+        },
+        "series": {
+            "Foo to Bar": {
+                "startDate": "2/11/2021",
+                "from": {
+                    "view": "Foo",
+                    "filter": ["Bar"],
+                },
+                "to": {
+                    "view": "Bar",
+                    "filter": ["Foo"],
+                },
+            }
+        },
+    }
+    api_values = (
+        {
+            "values": [
+                ["Date", "Column1", "Column2", "Deposit", "Withdrawal"],
+                ["2/10/2021", "Bar", "", "", "$100.00"],
+                ["2/11/2021", "Bar", "", "", "$15.00"],
+            ]
+        },
+        {
+            "values": [
+                ["Date", "Column1", "Column2", "Deposit", "Withdrawal"],
+                ["2/11/2021", "Foo", "", "$15.00", ""],
+            ]
+        },
+    )
+    _default(temp_config_obj, api_values)
+
+    # Verify
+    _verify_no_problems_output(capsys)
