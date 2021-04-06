@@ -32,11 +32,16 @@ class DefinitionPart:
             self.__range = "A:I"
         self.__filter = []
         for i in range(2):
+            try:
+                value_config = part_config["filter"][i]
+            except IndexError:
+                value_config = ""
+
             self.__filter.append(
                 {
                     "type": "columnName",
                     "columnName": view_profile["filter"][i],
-                    "value": part_config["filter"][i],
+                    "value": value_config,
                 }
             )
         self.__date_column_name = view_profile["dateColumn"]

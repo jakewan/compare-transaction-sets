@@ -249,3 +249,59 @@ def test_similar_filter_for_opposing_transaction_defs_is_okay(capsys):
         == f"""{OK}No problems found.{RESET}
 """
     )
+
+
+def test_second_descriptive_column_value_config_is_optional():
+    temp_config_obj = {
+        "spreadsheets": {
+            "foo": {"spreadsheetId": "foo"},
+        },
+        "viewProfiles": {
+            "foo": {
+                "spreadsheet": "foo",
+                "dateColumn": "Date",
+                "filter": ["Column1", "Column2"],
+            },
+        },
+        "views": {
+            "Foo": {
+                "profile": "foo",
+                "sheet": "Foo",
+                "valueColumn": "Withdrawal",
+            },
+            "Bar": {
+                "profile": "foo",
+                "sheet": "Bar",
+                "valueColumn": "Deposit",
+            },
+        },
+        "series": {
+            "Foo to Bar": {
+                "from": {
+                    "view": "Foo",
+                    "filter": ["Bar"],
+                },
+                "to": {
+                    "view": "Bar",
+                    "filter": ["Foo"],
+                },
+            }
+        },
+    }
+    api_values = (
+        {
+            "values": [
+                ["Date", "Column1", "Column2", "Deposit", "Withdrawal"],
+                ["2/10/2021", "Bar", "", "", "$100.00"],
+                ["2/11/2021", "Bar", "", "", "$15.00"],
+            ]
+        },
+        {
+            "values": [
+                ["Date", "Column1", "Column2", "Deposit", "Withdrawal"],
+                ["2/10/2021", "Foo", "", "$100.00", ""],
+                ["2/11/2021", "Foo", "", "$15.00", ""],
+            ]
+        },
+    )
+    _default(temp_config_obj, api_values)
